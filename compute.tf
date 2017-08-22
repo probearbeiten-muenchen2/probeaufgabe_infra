@@ -167,6 +167,29 @@ resource "aws_iam_role_policy" "scale_policy" {
 EOF
 }
 
+resource "aws_iam_role_policy" "s3_deploy_policy" {
+  name = "s3_deploy_policy"
+  role = "${aws_iam_role.codedeploy_instance.id}"
+
+  policy = <<EOF
+{
+      "Version": "2012-10-17",
+      "Statement": [
+          {
+              "Sid": "Stmt1503412198000",
+              "Effect": "Allow",
+              "Action": [
+                  "s3:*"
+              ],
+              "Resource": [
+                  "arn:aws:s3:::probeaufgabe-deploy"
+              ]
+          }
+      ]
+}
+EOF
+}
+
 resource "aws_alb_listener" "web" {
   load_balancer_arn = "${aws_alb.web.arn}"
   port              = "80"
