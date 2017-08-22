@@ -25,7 +25,7 @@ variable "project_name" {
 
 variable "ami" {
   description = "custom ami: ubuntu 16.04, nginx, codedeploy-agent"
-  default     = "ami-49619e30"
+  default     = "ami-2a5ca353"
 }
 
 variable "vpc_cidr" {

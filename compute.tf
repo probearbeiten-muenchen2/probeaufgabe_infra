@@ -141,6 +141,32 @@ resource "aws_iam_role" "codedeploy_instance" {
 EOF
 }
 
+resource "aws_iam_role_policy" "scale_policy" {
+  name = "scale_policy"
+  role = "${aws_iam_role.codedeploy_instance.id}"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "elasticloadbalancing:Describe*",
+        "elasticloadbalancing:DeregisterTargets",
+        "elasticloadbalancing:RegisterTargets",
+        "autoscaling:Describe*",
+        "autoscaling:EnterStandby",
+        "autoscaling:ExitStandby",
+        "autoscaling:UpdateAutoScalingGroup"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
 resource "aws_alb_listener" "web" {
   load_balancer_arn = "${aws_alb.web.arn}"
   port              = "80"
@@ -170,7 +196,7 @@ resource "aws_launch_configuration" "web" {
 resource "aws_autoscaling_group" "web" {
   name_prefix               = "web-site-"
   max_size                  = 7
-  min_size                  = 1
+  min_size                  = 2
   default_cooldown          = 60
   health_check_grace_period = 600
   health_check_type         = "ELB"
